@@ -18,8 +18,8 @@ class MovieDetailResponseSchema(BaseModel):
     orig_title: str
     status: str
     orig_lang: str
-    budget: int
-    revenue: int
+    budget: float  # Змінено int на float
+    revenue: float  # Змінено int на float
     country: str
 
     class Config:
