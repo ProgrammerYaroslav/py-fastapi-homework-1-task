@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -24,7 +24,7 @@ class MovieDetailResponseSchema(BaseModel):
 
     class Config:
         """Вказує Pydantic читати дані з атрибутів моделі SQLAlchemy."""
-        orm_mode = True
+        from_attributes = True
 
 
 class MovieListResponseSchema(BaseModel):
@@ -32,11 +32,11 @@ class MovieListResponseSchema(BaseModel):
     Схема для відповіді зі списком фільмів та інформацією про пагінацію.
     """
     movies: List[MovieDetailResponseSchema]
-    prev_page: str = Field(..., description="Посилання на попередню сторінку")
-    next_page: str = Field(..., description="Посилання на наступну сторінку")
+    prev_page: Optional[str] = Field(None, description="Посилання на попередню сторінку")
+    next_page: Optional[str] = Field(None, description="Посилання на наступну сторінку")
     total_pages: int = Field(..., description="Загальна кількість сторінок")
     total_items: int = Field(..., description="Загальна кількість фільмів")
 
     class Config:
         """Вказує Pydantic читати дані з атрибутів моделі SQLAlchemy."""
-        orm_mode = True
+        from_attributes = True
