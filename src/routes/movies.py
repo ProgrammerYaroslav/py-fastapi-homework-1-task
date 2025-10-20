@@ -47,7 +47,7 @@ async def get_movies_list(
     movies = movies_result.scalars().all()
 
     # Формування URL для попередньої та наступної сторінок
-    # Примітка: FastAPI автоматично об'єднає префікс "/theater" з роутера, 
+    # Примітка: FastAPI автоматично об'єднає префікс "/theater" з роутера,
     # тому тут ми використовуємо відносний шлях.
     base_url = "/theater/movies/"
     prev_page_url = (
@@ -87,4 +87,3 @@ async def get_movie_details(
         )
 
     return movie
-
