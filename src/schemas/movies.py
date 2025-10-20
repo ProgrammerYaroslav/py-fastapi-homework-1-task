@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -18,13 +18,13 @@ class MovieDetailResponseSchema(BaseModel):
     orig_title: str
     status: str
     orig_lang: str
-    budget: float  # Змінено int на float
-    revenue: float  # Змінено int на float
+    budget: float
+    revenue: float
     country: str
 
     class Config:
         """Вказує Pydantic читати дані з атрибутів моделі SQLAlchemy."""
-        from_attributes = True
+        orm_mode = True
 
 
 class MovieListResponseSchema(BaseModel):
@@ -32,7 +32,11 @@ class MovieListResponseSchema(BaseModel):
     Схема для відповіді зі списком фільмів та інформацією про пагінацію.
     """
     movies: List[MovieDetailResponseSchema]
-    prev_page: Optional[str] = Field(None, description="Посилання на попередню сторінку")
-    next_page: Optional[str] = Field(None, description="Посилання на наступну сторінку")
+    prev_page: str = Field(..., description="Посилання на попередню сторінку")
+    next_page: str = Field(..., description="Посилання на наступну сторінку")
     total_pages: int = Field(..., description="Загальна кількість сторінок")
     total_items: int = Field(..., description="Загальна кількість фільмів")
+
+    class Config:
+        """Вказує Pydantic читати дані з атрибутів моделі SQLAlchemy."""
+        orm_mode = True

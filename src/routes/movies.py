@@ -1,5 +1,4 @@
 from math import ceil
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
@@ -39,28 +38,24 @@ async def get_movies_list(
     # Розрахунок загальної кількості сторінок
     total_pages = ceil(total_items / per_page)
 
-    # Перевірка, чи запитана сторінка не виходить за межі
-    if page > total_pages:
-        raise HTTPException(status_code=404, detail="No movies found.")
-
     # Розрахунок зміщення
     offset = (page - 1) * per_page
 
-    # Отримання фільмів для поточної сторінки
-    movies_query = select(MovieModel).offset(offset).limit(per_page)
+    # Отримання фільмів для поточної сторінки з детермінованим сортуванням
+    movies_query = select(MovieModel).order_by(MovieModel.id).offset(offset).limit(per_page)
     movies_result = await db.execute(movies_query)
     movies = movies_result.scalars().all()
 
+    # Якщо на запитаній сторінці немає фільмів, повертаємо 404
+    if not movies:
+        raise HTTPException(status_code=404, detail="No movies found.")
+
     # Формування URL для попередньої та наступної сторінок
-    # Примітка: FastAPI автоматично об'єднає префікс "/theater" з роутера,
-    # тому тут ми використовуємо відносний шлях.
     base_url = "/theater/movies/"
-    prev_page_url = (
-        f"{base_url}?page={page - 1}&per_page={per_page}" if page > 1 else None
-    )
-    next_page_url = (
-        f"{base_url}?page={page + 1}&per_page={per_page}" if page < total_pages else None
-    )
+    prev_page_num = max(1, page - 1)
+    next_page_num = min(total_pages, page + 1)
+    prev_page_url = f"{base_url}?page={prev_page_num}&per_page={per_page}"
+    next_page_url = f"{base_url}?page={next_page_num}&per_page={per_page}"
 
     return {
         "movies": movies,
