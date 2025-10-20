@@ -32,11 +32,16 @@ async def get_movies_list(
     total_items_result = await db.execute(count_query)
     total_items = total_items_result.scalar_one()
 
+    # Якщо фільмів немає, одразу повертаємо 404
     if total_items == 0:
         raise HTTPException(status_code=404, detail="No movies found.")
 
     # Розрахунок загальної кількості сторінок
     total_pages = ceil(total_items / per_page)
+
+    # Перевірка, чи запитана сторінка не виходить за межі
+    if page > total_pages:
+        raise HTTPException(status_code=404, detail="No movies found.")
 
     # Розрахунок зміщення
     offset = (page - 1) * per_page
