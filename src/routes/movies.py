@@ -52,10 +52,12 @@ async def get_movies_list(
 
     # Формування URL для попередньої та наступної сторінок
     base_url = "/theater/movies/"
-    prev_page_num = max(1, page - 1)
-    next_page_num = min(total_pages, page + 1)
-    prev_page_url = f"{base_url}?page={prev_page_num}&per_page={per_page}"
-    next_page_url = f"{base_url}?page={next_page_num}&per_page={per_page}"
+    prev_page_url = (
+        f"{base_url}?page={page - 1}&per_page={per_page}" if page > 1 else None
+    )
+    next_page_url = (
+        f"{base_url}?page={page + 1}&per_page={per_page}" if page < total_pages else None
+    )
 
     return {
         "movies": movies,
